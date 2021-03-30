@@ -1,55 +1,109 @@
 <template>
-<div>
-  <canvas ref="canvas" id="gameWindow" :width="state.width" :height="state.height">
-  </canvas>
-    <div class="Character">
-        <img id="character_sprite" class="Character_sprite pixelart" src="./assets/Enemy_02-1.png" alt="">
-
+    <div id="gameWindow" ref="gameWindow">
+      <div class="map pixelart" ref="map">
+          <!-- 
+          -->
+        <Character
+          :facing="state.facing"
+          :walking="state.isWalking"
+            :posx="state.placeCharacter.x"
+            :posy="state.placeCharacter.y"
+        />
+        <!-- <div class="character" ref="character" facing="down" walking="true">
+            <div id="character_sprite" class="character_sprite pixelart"></div>
+            <div id="character_shadow" class="character_shadow pixelart"></div>
+        </div> -->
+      </div>
     </div>
-
-  <button @click="reset">Woohoo</button>
-</div>
 </template>
 
 <script>
 import { onMounted, reactive, ref } from 'vue';
-// keycodes: W: 87, A: 65, S: 83, D: 68
+import Character from './components/Character'
 export default {
   name: 'App',
+  component: { Character },
   setup() {
-    const canvas = ref(null);
-    const width = 800;
-    const height = 600;
-    let character_image;
+    const character = ref(null);
+    const map = ref(null);
+    const gameWindow = ref(null);
+    let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
+    const width = pixelSize * 267;
+    const height = pixelSize * 213;
     const state = reactive({
-      ctx: null,
       width,
       height,
-      posX: (width / 2) - 16,
-      posY: (height / 2) - 16,
-      startX: 0,
-      startY: 0,
+      speed: 1,
+      x: 0,
+      y: 0,
+      held_directions: [],
+      isWalking: false,
+      facing: 'down',
+      placeCharacter: {
+        x: 0,
+        y: 0,
+      },
     })
 
-    let isKeyDown = false;
-    
-    const reset = () => {
-      state.posX = (width / 2) - 16;
-      state.posY =  (height / 2) - 16;
-      state.ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-      const character_image = document.getElementById('character_sprite');
-      state.ctx.drawImage(character_image, state.startX, state.startY, 32, 32, state.posX, state.posY, 32, 32);
-      /* 
-      state.ctx.fillStyle = '#fac';
-      state.ctx.fillRect(state.posX, state.posY, 32, 32); */
+    const directions = {
+      right: 'right',
+      left: 'left',
+      up: 'up',
+      down: 'down'
     }
+
+    const placeCharacter = () => {
+      const held_direction = state.held_directions[0];
+      if (held_direction) {
+        if (held_direction === directions.right) { state.x += state.speed; }
+        if (held_direction === directions.left) { state.x -= state.speed; }
+        if (held_direction === directions.down) { state.y += state.speed; }
+        if (held_direction === directions.up) { state.y -= state.speed; }
+        state.facing = held_direction;
+      }
+      state.isWalking = held_direction ? 'true' : 'false';
+
+      let leftLimit = 0;
+      let rightLimit = (16 * 11)+8;
+      let topLimit = -8 + 32;
+      let bottomLimit = (16 * 7);
+      if (state.x < leftLimit) { state.x = leftLimit; }
+      if (state.x > rightLimit) { state.x = rightLimit; }
+      if (state.y < topLimit) { state.y = topLimit; }
+      if (state.y > bottomLimit) { state.y = bottomLimit; }
+
+      let camera_left = pixelSize * 132;
+      let camera_top = pixelSize * 84;
+
+      map.value.style.transform = `translate3d( ${-state.x*pixelSize+camera_left}px, ${-state.y*pixelSize+camera_top}px, 0 )`;
+      //character.value.style.transform = `translate3d( ${state.x*pixelSize}px, ${state.y*pixelSize}px, 0 )`;
+      state.placeCharacter = { x: state.x * pixelSize, y: state.y * pixelSize}
+      
+    }
+
+    const step = () => {
+      placeCharacter();
+      window.requestAnimationFrame(() => {
+        step();
+      })
+    }
+    
     onMounted(() => {
-      character_image = document.getElementById('character_sprite');
-      state.ctx = canvas.value.getContext('2d');
-      state.ctx.drawImage(character_image, state.startX, state.startY, 32, 32, state.posX, state.posY, 32, 32);
-      //canvas.value.requestPointerLock || canvas.value.mozRequestPointerLock
-      window.addEventListener('keydown', checkPressedKey, true);
-      canvas.value.addEventListener('mousedown', (event) => {
+      step();
+      document.addEventListener("keydown", (e) => {
+        let dir = keys[e.code];
+        if (dir && state.held_directions.indexOf(dir) === -1) {
+            state.held_directions.unshift(dir)
+        }
+      })
+      document.addEventListener("keyup", (e) => {
+        let dir = keys[e.code];
+        let index = state.held_directions.indexOf(dir);
+        if (index > -1) {
+            state.held_directions.splice(index, 1)
+        }
+      });
+      gameWindow.value.addEventListener('mousedown', (event) => {
         const { x, y } = event.target.getBoundingClientRect();
         const mouseX = event.clientX - x;
         const mouseY = event.clientY - y;
@@ -57,54 +111,49 @@ export default {
       })
     })
 
-    function checkPressedKey(e) {
-      isKeyDown = true;
-      if(isKeyDown) console.log('hooooooo');
-      switch (e.keyCode) {
-        case 87: // W
-          state.posY -= 32;
-          break;
-        case 65: // A
-          state.posX -= 32;
-          break;
-        case 83: // S
-          state.posY += 32;
-          break;
-        case 68: // D
-          state.posX += 32;
-          break;
-          case 38: // Arrow UP
-          state.posY -= 32;
-          break;
-        case 37: // Arrow Left
-          state.posX -= 32;
-          break;
-        case 40: // Arrow Down
-          state.posY += 32;
-          break;
-        case 39: // Arrow Right
-          state.posX += 32;
-          break;
-        default:
-          break;
-      }
-      state.ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-      state.ctx.drawImage(character_image, state.startX, state.startY, 32, 32, state.posX, state.posY, 32, 32);
-      isKeyDown = false;
+    const keys = {
+      'ArrowUp': directions.up,
+      'ArrowLeft': directions.left,
+      'ArrowRight': directions.right,
+      'ArrowDown': directions.down,
+      'KeyW': directions.up,
+      'KeyA': directions.left,
+      'KeyD': directions.right,
+      'KeyS': directions.down,
     }
 
-    return { state, canvas, reset, checkPressedKey }
+    return {
+      state,
+      map,
+      gameWindow,
+      character,
+    }
   }
 }
 </script>
 
 <style lang="scss">
 :root{
-  --pixel-size: 2;
+  --pixel-size: 2px;
+  --grid-cell: calc(var(--pixel-size) * 16);
+}
+
+@media( min-width: 700px) {
+  :root{
+    --pixel-size: 3px;
+  }
+}
+@media( min-width: 900px){
+  :root{
+    --pixel-size: 3px;
+  }
 }
 
 body{ 
   background: wheat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #app {
@@ -113,41 +162,28 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
-}
-
-#gameWindow{
-  background: white;
-  width: 800px;
-  height: 600px;
-  border: 1px solid black;
 }
 
 .pixelart {
+  -ms-interpolation-mode: nearest-neighbor;
   image-rendering: pixelated;
 }
 
-.Character {
-  width: calc(32px * var(--pixel-size));
-  height: calc(32px * var(--pixel-size));
-  margin: 3em auto;
+#gameWindow{
+  width: calc(var(--pixel-size) * 267);
+  height: calc(var(--pixel-size) * 213);
+  border: 1px solid black;
   overflow: hidden;
+}
+
+.map {
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: pixelated;
+  background-image: url('./assets/untitledgame_map.png');
+  background-size: 100%;
+  width: calc(25 * var(--grid-cell));
+  height: calc(20 * var(--grid-cell));
   position: relative;
 }
 
-.Character_sprite {
-  width: calc(96px * var(--pixel-size));
-  /* top: calc(-32px * var(--pixel-size)); */
-  position: relative;
-  animation: walkDown 1s steps(3) infinite;
-}
-
-@keyframes walkDown {
-  from {
-    transform: translate3d(0px, 0, 0);
-  }
-  to {
-    transform: translate3d(-100%, 0 ,0);
-  }
-}
 </style>

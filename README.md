@@ -1,24 +1,4 @@
-# test
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# UntitledGame - Joacim Norbeck
+---
+##### A game made with HTML, CSS and JavaScript
+##### Trello: [Click here!](https://trello.com/b/7l1iJdQi/untitledgame)
