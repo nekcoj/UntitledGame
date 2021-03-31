@@ -1,12 +1,13 @@
 <template>
-  <div class="character" ref="character" :facing="facing" :walking="walking">
+  <div class="character" ref="character" :facing="facing" :walking="walking" :posx="posx" :posy="posy">
     <div id="character_sprite" class="character_sprite pixelart"></div>
     <div id="character_shadow" class="character_shadow pixelart"></div>
   </div>
 </template>
 
 <script>
-import { ref, watchEffect } from 'vue';
+import { onMounted, watchEffect } from 'vue';
+import Store from '../helpers/Store'
 
 export default {
   name: 'Character',
@@ -17,13 +18,29 @@ export default {
     posy: Number,
   },
   setup (props) {
-    const character = ref(null);
+    const { keys, movement, character } = Store();
     
 
     watchEffect(() => {
       if(props.posx || props.posy) {
         character.value.style.transform = `translate3d( ${props.posx}px, ${props.posy}px, 0 )`;
       }
+    });
+
+    onMounted(() => {
+      document.addEventListener("keydown", (e) => {
+        let dir = keys[e.code];
+        if (dir && movement.held_directions.indexOf(dir) === -1) {
+            movement.held_directions.unshift(dir)
+        }
+      })
+      document.addEventListener("keyup", (e) => {
+        let dir = keys[e.code];
+        let index = movement.held_directions.indexOf(dir);
+        if (index > -1) {
+            movement.held_directions.splice(index, 1)
+        }
+      });
     })
     return { character }
   }

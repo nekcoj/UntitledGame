@@ -4,126 +4,74 @@
           <!-- 
           -->
         <Character
-          :facing="state.facing"
-          :walking="state.isWalking"
-            :posx="state.placeCharacter.x"
-            :posy="state.placeCharacter.y"
+          :facing="movement.facing"
+          :walking="movement.isWalking"
+          :posx="movement.placeCharacter.x"
+          :posy="movement.placeCharacter.y"
         />
-        <!-- <div class="character" ref="character" facing="down" walking="true">
-            <div id="character_sprite" class="character_sprite pixelart"></div>
-            <div id="character_shadow" class="character_shadow pixelart"></div>
-        </div> -->
       </div>
     </div>
 </template>
 
 <script>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, watchEffect } from 'vue';
 import Character from './components/Character'
+import Movement from './helpers/Movement';
+import Store from './helpers/Store';
+import GameSetup from './helpers/GameSetup';
+
 export default {
   name: 'App',
   component: { Character },
   setup() {
-    const character = ref(null);
-    const map = ref(null);
-    const gameWindow = ref(null);
-    let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
-    const width = pixelSize * 267;
-    const height = pixelSize * 213;
-    const state = reactive({
-      width,
-      height,
-      speed: 1,
-      x: 0,
-      y: 0,
-      held_directions: [],
-      isWalking: false,
-      facing: 'down',
-      placeCharacter: {
-        x: 0,
-        y: 0,
-      },
-    })
-
-    const directions = {
-      right: 'right',
-      left: 'left',
-      up: 'up',
-      down: 'down'
-    }
-
-    const placeCharacter = () => {
-      const held_direction = state.held_directions[0];
-      if (held_direction) {
-        if (held_direction === directions.right) { state.x += state.speed; }
-        if (held_direction === directions.left) { state.x -= state.speed; }
-        if (held_direction === directions.down) { state.y += state.speed; }
-        if (held_direction === directions.up) { state.y -= state.speed; }
-        state.facing = held_direction;
-      }
-      state.isWalking = held_direction ? 'true' : 'false';
-
-      let leftLimit = 0;
-      let rightLimit = (16 * 11)+8;
-      let topLimit = -8 + 32;
-      let bottomLimit = (16 * 7);
-      if (state.x < leftLimit) { state.x = leftLimit; }
-      if (state.x > rightLimit) { state.x = rightLimit; }
-      if (state.y < topLimit) { state.y = topLimit; }
-      if (state.y > bottomLimit) { state.y = bottomLimit; }
-
-      let camera_left = pixelSize * 132;
-      let camera_top = pixelSize * 84;
-
-      map.value.style.transform = `translate3d( ${-state.x*pixelSize+camera_left}px, ${-state.y*pixelSize+camera_top}px, 0 )`;
-      //character.value.style.transform = `translate3d( ${state.x*pixelSize}px, ${state.y*pixelSize}px, 0 )`;
-      state.placeCharacter = { x: state.x * pixelSize, y: state.y * pixelSize}
-      
-    }
-
+    const { loadLevel, loadObstacles } = GameSetup();
+    const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
+    const { movement, map, character, gameWindow, pixelSize, gameState } = Store();
+    
     const step = () => {
       placeCharacter();
       window.requestAnimationFrame(() => {
         step();
       })
     }
+
+    watchEffect(() => {
+      if (movement.x || movement.y) {
+        let camera_left = pixelSize * 132;
+        let camera_top = pixelSize * 84;
+        map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0 )`;
+      }
+      if(gameState.currentLevel) {
+        loadLevel();
+      }
+    })
+    watchEffect(() => {
+      if(gameState.level) {
+        loadObstacles();
+      }
+    })
     
-    onMounted(() => {
+    onMounted(async () => {
+      await loadLevel();
+      loadCharacterOnMap();
       step();
-      document.addEventListener("keydown", (e) => {
-        let dir = keys[e.code];
-        if (dir && state.held_directions.indexOf(dir) === -1) {
-            state.held_directions.unshift(dir)
-        }
-      })
-      document.addEventListener("keyup", (e) => {
-        let dir = keys[e.code];
-        let index = state.held_directions.indexOf(dir);
-        if (index > -1) {
-            state.held_directions.splice(index, 1)
-        }
-      });
       gameWindow.value.addEventListener('mousedown', (event) => {
         const { x, y } = event.target.getBoundingClientRect();
         const mouseX = event.clientX - x;
         const mouseY = event.clientY - y;
         console.log(mouseX, mouseY);
       })
+
+      document.addEventListener('keydown', e => {
+        if(e.code === 'KeyZ') {
+          let coords = getCoordinates();
+          console.log(coords);
+        }
+      })
     })
 
-    const keys = {
-      'ArrowUp': directions.up,
-      'ArrowLeft': directions.left,
-      'ArrowRight': directions.right,
-      'ArrowDown': directions.down,
-      'KeyW': directions.up,
-      'KeyA': directions.left,
-      'KeyD': directions.right,
-      'KeyS': directions.down,
-    }
-
     return {
-      state,
+      movement,
       map,
       gameWindow,
       character,
@@ -140,12 +88,12 @@ export default {
 
 @media( min-width: 700px) {
   :root{
-    --pixel-size: 3px;
+    --pixel-size: 2px;
   }
 }
 @media( min-width: 900px){
   :root{
-    --pixel-size: 3px;
+    --pixel-size: 2px;
   }
 }
 
@@ -170,6 +118,7 @@ body{
 }
 
 #gameWindow{
+  background: #0F000F;
   width: calc(var(--pixel-size) * 267);
   height: calc(var(--pixel-size) * 213);
   border: 1px solid black;
@@ -184,6 +133,13 @@ body{
   width: calc(25 * var(--grid-cell));
   height: calc(20 * var(--grid-cell));
   position: relative;
+}
+
+.obstacle {
+  width: var(--grid-cell);
+  height: var(--grid-cell);
+  position: absolute;
+  background: red;
 }
 
 </style>
