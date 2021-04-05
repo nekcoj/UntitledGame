@@ -28,10 +28,6 @@ const directions = {
   down: 'down'
 }
 
-const map = ref(null);
-const character = ref(null);
-const gameWindow = ref(null);
-
 const keys = {
   'ArrowUp': directions.up,
   'ArrowLeft': directions.left,
@@ -42,6 +38,10 @@ const keys = {
   'KeyD': directions.right,
   'KeyS': directions.down,
 }
+
+const map = ref(null);
+const character = ref(null);
+const gameWindow = ref(null);
 
 export default function Store() {
   const pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));

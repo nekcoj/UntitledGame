@@ -1,8 +1,6 @@
 <template>
     <div id="gameWindow" ref="gameWindow">
       <div class="map pixelart" ref="map">
-          <!-- 
-          -->
         <Character
           :facing="movement.facing"
           :walking="movement.isWalking"
@@ -10,6 +8,12 @@
           :posy="movement.placeCharacter.y"
         />
       </div>
+      <teleport to="body">
+        <div v-if="character" :style="{position: 'absolute', top: '25px', left: '25px', width: '150px', height: '300px' }">
+          <p>{{getCoordinates()}}</p>
+          <p>[{{character.getAttribute('posx')}}, {{character.getAttribute('posy')}}]</p>
+        </div>
+      </teleport>
     </div>
 </template>
 
@@ -25,7 +29,7 @@ export default {
   component: { Character },
   setup() {
     const { loadLevel, loadObstacles } = GameSetup();
-    const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
+    const { placeCharacter, getCoordinates, loadCharacterOnMap, collision } = Movement();
     const { movement, map, character, gameWindow, pixelSize, gameState } = Store();
     
     const step = () => {
@@ -54,6 +58,7 @@ export default {
     onMounted(async () => {
       await loadLevel();
       loadCharacterOnMap();
+
       step();
       gameWindow.value.addEventListener('mousedown', (event) => {
         const { x, y } = event.target.getBoundingClientRect();
@@ -68,6 +73,11 @@ export default {
           console.log(coords);
         }
       })
+      document.addEventListener('keydown', e => {
+        if(e.code === 'KeyX') {
+          collision();
+        }
+      })
     })
 
     return {
@@ -75,6 +85,9 @@ export default {
       map,
       gameWindow,
       character,
+      getCoordinates,
+      collision,
+
     }
   }
 }
@@ -139,7 +152,8 @@ body{
   width: var(--grid-cell);
   height: var(--grid-cell);
   position: absolute;
-  background: red;
+  /* background: red; 
+  border: 1px solid black; */
 }
 
 </style>

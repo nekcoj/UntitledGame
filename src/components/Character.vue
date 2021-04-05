@@ -58,6 +58,7 @@ export default {
     height: calc(var(--grid-cell));
     overflow: hidden;
     position: absolute;
+    /* border: 1px solid turquoise; */
   }
   .character_shadow {
     width: calc( var(--grid-cell) * 3);

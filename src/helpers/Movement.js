@@ -1,7 +1,8 @@
 import Store from './Store';
 
 export default function Movement() {
-  const { movement, directions, map, pixelSize, gameState } = Store();
+  const { movement, directions, map, pixelSize, gameState, character } = Store();
+
   const placeCharacter = () => {
     const held_direction = movement.held_directions[0];
     if (held_direction) {
@@ -14,51 +15,61 @@ export default function Movement() {
     movement.isWalking = held_direction ? 'true' : 'false';
     
     let leftLimit = 0;
-    let rightLimit = 800;
+    let rightLimit = 400 - (8 * pixelSize);
     let topLimit = 0;
-    let bottomLimit = 640;
+    let bottomLimit = 320 - (8 * pixelSize);
     if (movement.x < leftLimit) { movement.x = leftLimit; }
     if (movement.x > rightLimit) { movement.x = rightLimit; }
     if (movement.y < topLimit) { movement.y = topLimit; }
     if (movement.y > bottomLimit) { movement.y = bottomLimit; }
     
-    checkIfBlockedTile(getCoordinates());
-    
-    
+    checkIfBlockedTile();
   }
 
   const getCoordinates = () => {
     return [Math.floor(movement.placeCharacter.x / (pixelSize * 16)), Math.floor(movement.placeCharacter.y / (pixelSize * 16))]
   }
 
-  const checkIfBlockedTile = (coords) => {
+  const checkIfBlockedTile = () => {
     /**
      * 0 = Blocked
      * 1 = Not Blocked 
      * 
      *  */
-    if(gameState.level.blocked[coords[1]][coords[0]] === 0){
-      console.log(coords);
+    let isBlocked = false;
+    const collDivs = document.querySelectorAll('.obstacle');
+    collDivs.forEach(div => {
+      const { x, y } = div.getBoundingClientRect();
+      const charX = character.value.getBoundingClientRect().x;
+      const charY = character.value.getBoundingClientRect().y;
+      const size = 16 * pixelSize;
+      if (x < charX + size - 2 && x + size > charX + 2 && y < charY + (size / 2) + 1 && y + (size / 2) + 1 > charY ) {
+        isBlocked = true;
+      }
+    })
+
+    if(isBlocked){
       switch(movement.facing) {
         case 'up':
-          movement.y = coords[1] * 16 * pixelSize;
+          console.log('UP - nope');
+          movement.y += 1;
           break;
         case 'down':
-          movement.y = (coords[1] - 1) * 16 * pixelSize;
+          console.log('DOWN - nope');
+          movement.y -= 1;
           break;
         case 'left':
-          console.log('left', coords, pixelSize); 
-          movement.x = coords[0] * 16 * pixelSize;
-          console.log(movement.x);
-          console.log(getCoordinates());
+          console.log('LEFT - nope');
+          movement.x += 1; 
           break;
         case 'right':
-          movement.x = coords[0] * 16 * pixelSize;
+          console.log('RIGHT - nope');
+          movement.x -= 1;
           break;
         default:
           break;
       }
-    } 
+    }
     
     movement.placeCharacter = { x: movement.x * pixelSize, y: movement.y * pixelSize}
   }
@@ -79,8 +90,24 @@ export default function Movement() {
     });
   }
 
+  const collision = () => {
+    const collElems = document.querySelectorAll('.obstacle');
+    collElems.forEach( div => {
+      if (
+        div.getBoundingClientRect().left < movement.placeCharacter.x + (16 * pixelSize) &&
+        div.getBoundingClientRect().left + (16 * pixelSize) > movement.placeCharacter.x &&
+        div.getBoundingClientRect().top < movement.placeCharacter.y + (16 * pixelSize) &&
+        div.getBoundingClientRect().top + (16 * pixelSize) > movement.placeCharacter.y) {
+          console.log('collision!');
+      }
+    })
+    console.log(collElems);
+    console.log(character.value.getAttribute('posx'));
+  }
+
 
   return {
+    collision,
     placeCharacter,
     getCoordinates,
     checkIfBlockedTile,
