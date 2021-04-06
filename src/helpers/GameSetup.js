@@ -3,7 +3,7 @@ import Store from './Store';
 
 export default function GameSetup() {
   const { readJsonFile } = JsonHelper();
-  const { map, gameState } = Store();
+  const { map, gameState, pixelSize } = Store();
 
   async function loadLevel() {
     const levels = await readJsonFile()
@@ -16,8 +16,8 @@ export default function GameSetup() {
         if (col === 0) {
           let el = document.createElement('div');
           el.classList.add('obstacle')
-          el.style.top = i * 32+'px';
-          el.style.left = j * 32 + 'px';
+          el.style.top = i * (16 * pixelSize)+'px';
+          el.style.left = j * (16 * pixelSize) + 'px';
           map.value.appendChild(el);
         }
       })

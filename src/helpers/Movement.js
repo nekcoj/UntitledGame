@@ -45,31 +45,31 @@ export default function Movement() {
       const size = 16 * pixelSize;
       if (x < charX + size - 2 && x + size > charX + 2 && y < charY + (size / 2) + 1 && y + (size / 2) + 1 > charY ) {
         isBlocked = true;
+        if(isBlocked){
+          switch(movement.facing) {
+            case 'up':
+              console.log('UP - nope');
+              movement.y += 1;
+              break;
+            case 'down':
+              console.log('DOWN - nope');
+              movement.y -= 1;
+              break;
+            case 'left':
+              console.log('LEFT - nope');
+              movement.x += 1; 
+              break;
+            case 'right':
+              console.log('RIGHT - nope');
+              movement.x -= 1;
+              break;
+            default:
+              break;
+          }
+        }
       }
     })
 
-    if(isBlocked){
-      switch(movement.facing) {
-        case 'up':
-          console.log('UP - nope');
-          movement.y += 1;
-          break;
-        case 'down':
-          console.log('DOWN - nope');
-          movement.y -= 1;
-          break;
-        case 'left':
-          console.log('LEFT - nope');
-          movement.x += 1; 
-          break;
-        case 'right':
-          console.log('RIGHT - nope');
-          movement.x -= 1;
-          break;
-        default:
-          break;
-      }
-    }
     
     movement.placeCharacter = { x: movement.x * pixelSize, y: movement.y * pixelSize}
   }
@@ -80,8 +80,8 @@ export default function Movement() {
         if(column === 5) {
           let camera_left = pixelSize * 132;
           let camera_top = pixelSize * 84;
-          movement.placeCharacter.x = j * pixelSize * 8;
-          movement.placeCharacter.y = i * pixelSize * 8;
+          movement.placeCharacter.x = j * pixelSize;
+          movement.placeCharacter.y = i * pixelSize;
           movement.x = j * pixelSize * 8;
           movement.y = i * pixelSize * 8;
           map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0 )`;

@@ -7,7 +7,8 @@
 
 <script>
 import { onMounted, watchEffect } from 'vue';
-import Store from '../helpers/Store'
+import Store from '../helpers/Store';
+
 
 export default {
   name: 'Character',

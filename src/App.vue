@@ -1,5 +1,9 @@
 <template>
     <div id="gameWindow" ref="gameWindow">
+      <Health :max="characterState.maxHealth" :current="characterState.currentHealth"/>
+      <div class="actionbar-container">
+        <Actionbar class="actionbar"/>
+      </div>
       <div class="map pixelart" ref="map">
         <Character
           :facing="movement.facing"
@@ -8,12 +12,22 @@
           :posy="movement.placeCharacter.y"
         />
       </div>
+
+
+      <!-- For testing purposes START -->
       <teleport to="body">
         <div v-if="character" :style="{position: 'absolute', top: '25px', left: '25px', width: '150px', height: '300px' }">
           <p>{{getCoordinates()}}</p>
           <p>[{{character.getAttribute('posx')}}, {{character.getAttribute('posy')}}]</p>
+          <div>{{characterState.currentHealth}}/{{characterState.maxHealth}}</div>
+          <p>
+            <button @click="characterState.setHealth(5)">+5</button>
+            hp
+            <button @click="characterState.setHealth(-5)">-5</button>
+          </p>
         </div>
       </teleport>
+      <!-- For testing purposes END -->
     </div>
 </template>
 
@@ -23,14 +37,16 @@ import Character from './components/Character'
 import Movement from './helpers/Movement';
 import Store from './helpers/Store';
 import GameSetup from './helpers/GameSetup';
+import Health from './components/Health';
+import Actionbar from './components/Actionbar';
 
 export default {
   name: 'App',
-  component: { Character },
+  component: { Character, Health, Actionbar },
   setup() {
     const { loadLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap, collision } = Movement();
-    const { movement, map, character, gameWindow, pixelSize, gameState } = Store();
+    const { movement, map, character, gameWindow, pixelSize, gameState, characterState } = Store();
     
     const step = () => {
       placeCharacter();
@@ -87,7 +103,7 @@ export default {
       character,
       getCoordinates,
       collision,
-
+      characterState,
     }
   }
 }
@@ -136,6 +152,7 @@ body{
   height: calc(var(--pixel-size) * 213);
   border: 1px solid black;
   overflow: hidden;
+  position: relative;
 }
 
 .map {
@@ -146,6 +163,14 @@ body{
   width: calc(25 * var(--grid-cell));
   height: calc(20 * var(--grid-cell));
   position: relative;
+}
+
+.actionbar-container {
+  display: flex;
+  position: absolute;
+  bottom: 50px;
+  left: 150px;
+  z-index: 2;
 }
 
 .obstacle {
