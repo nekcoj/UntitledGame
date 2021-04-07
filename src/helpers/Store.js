@@ -41,12 +41,13 @@ const characterState = reactive({
         x: 1,
         y: 0,
       },
-      cooldown: 2,
+      cooldown: 1,
+      distance: 200,
       effect: () => {
         console.log('FIREBALL!');
         let root = document.documentElement;
-        root.style.setProperty('--mouse-x', movement.mousePosition.x + 'px');
-        root.style.setProperty('--mouse-y', movement.mousePosition.y + 'px');
+        root.style.setProperty('--spell-end-x', movement.mousePosition.x + 'px');
+        root.style.setProperty('--spell-end-y', movement.mousePosition.y + 'px');
         let fireball = document.createElement('div');
         let posX = character.value.getAttribute('posx');
         let posY = character.value.getAttribute('posy');
@@ -55,9 +56,20 @@ const characterState = reactive({
         fireball.style.top = parseInt(posY) + (size / 2) + 'px';
         root.style.setProperty('--spell-start-x', parseInt(posX) + (size / 2) + 'px');
         root.style.setProperty('--spell-start-y', parseInt(posY) + (size / 2) + 'px');
+        let duration = 0.7;
+        fireball.style.animationDuration = duration + 's';
+        let dy = movement.mousePosition.y - (parseInt(posY) + (size / 2));
+        let dx = movement.mousePosition.x - (parseInt(posX) + (size / 2));
+        let theta = Math.atan2(dy, dx);
+        theta *= 180 / Math.PI;
+        fireball.style.transform = `rotate(${theta}deg)`;
         fireball.classList.add('attackSpell');
-        fireball.style.animationDuration = '0.7s';
         map.value.appendChild(fireball);
+        
+        setTimeout(() => {
+          fireball.remove();
+        }, duration * 1000);
+
       }
     },
     {

@@ -21,8 +21,7 @@ export default function GameSetup() {
           map.value.appendChild(el);
         }
       })
-    })
-    
+    }) 
   }
   return {
     loadLevel,

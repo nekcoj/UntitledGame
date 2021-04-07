@@ -113,9 +113,10 @@ export default {
   }
 
   .attackSpell{
-    width: calc(var(--grid-cell) / 2);
-    height: calc(var(--grid-cell) / 2);
-    background-color: black;
+    width: calc(var(--grid-cell));
+    height: calc(var(--grid-cell));
+    background: url('../assets/fireball.gif') no-repeat no-repeat;
+    background-size: 100%;
     position: absolute;
     animation: attackSpell;
     animation-timing-function: linear;
@@ -136,8 +137,8 @@ export default {
       top: var(--spell-start-y);
     }
     to {
-      left: var(--mouse-x);
-      top: var(--mouse-y);
+      left: var(--spell-end-x);
+      top: var(--spell-end-y);
     }
   }
 </style>
