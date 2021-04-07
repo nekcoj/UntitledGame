@@ -122,7 +122,7 @@ export default {
 }
 @media( min-width: 900px){
   :root{
-    --pixel-size: 2px;
+    --pixel-size: 3px;
   }
 }
 
@@ -168,8 +168,8 @@ body{
 .actionbar-container {
   display: flex;
   position: absolute;
-  bottom: 50px;
-  left: 150px;
+  bottom: 5px;
+  left: calc((var(--pixel-size) * 267) / 2 - (var(--grid-cell) * 3 / 2));
   z-index: 2;
 }
 

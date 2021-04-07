@@ -4,10 +4,13 @@
     v-for="(skill, index) in characterState.activeSkills"
     :key="index"
     :class="'action-'+index"
-    :style="{ backgroundPositionX: -(skill.iconPosition.x * 16 * pixelSize) +'px', backgroundPositionY: -(skill.iconPosition.y * 16 * pixelSize) +'px' }"
   >
-    <span class="actionbar-text">{{index+1}}</span>
+    <div
+      class="action-image pixelart"
+      :style="{ backgroundPositionX: -(skill.iconPosition.x * 16 * pixelSize) +'px', backgroundPositionY: -(skill.iconPosition.y * 16 * pixelSize) +'px' }"
+    />
     <div :id="'skill-'+index" class="cooldown">
+    <span class="actionbar-text">{{index+1}}</span>
 
     </div>
   </div>
@@ -61,11 +64,12 @@ export default {
   .actionbar{
     display: flex;
     position: absolute;
-    width: calc(var(--grid-cell) * 3) + 10;
-    height: var(-grid-cell);
+    width: calc(var(--grid-cell) * 3 + 10);
+    height: var(--grid-cell);
     border: 3px solid wheat;
     background-color: wheat;
-    justify-content: flex-start;
+    bottom: 0;
+    margin: 0 auto;
   }
   .actionbar-text {
     font-weight: 700;
@@ -78,35 +82,25 @@ export default {
     display: flex;
   }
 
-  .action-0{
-    background-image: url('../assets/icons.png');
-    width: var(--grid-cell);
-    height: var(--grid-cell);
+  .action-0, .action-1, .action-2{
+    width: calc(var(--grid-cell));
+    height: calc(var(--grid-cell));
     border: 2px solid black;
     outline: 1px solid grey;
-    display: flex;
+    position: relative;
+    overflow: hidden;
   }
-  .action-1{
-    background-image: url('../assets/icons.png');
-    width: var(--grid-cell);
-    height: var(--grid-cell);
-    border: 2px solid black;
-    outline: 1px solid grey;
-    display: flex;
-  }
-  .action-2{
-    background-image: url('../assets/icons.png');
-    width: var(--grid-cell);
-    height: var(--grid-cell);
-    border: 2px solid black;
-    outline: 1px solid grey;
-    display: flex;
+  .action-image {
+    background: url('../assets/icons.png') no-repeat no-repeat;
+    background-size: 100%;
+    width: calc(var(--grid-cell) * 16);
+    height: calc(var(--grid-cell) * 16);
+    position: absolute;
   }
 
   .cooldown{
     width: var(--grid-cell);
     height: var(--grid-cell);
-    display: flex;
     position: absolute;
     overflow: hidden;
   }
@@ -118,7 +112,11 @@ export default {
   }
 
   @keyframes cooldown {
-   0% { width: var(--grid-cell); }
-   100% { width: 0px; }
-}
+    0% {
+      width: var(--grid-cell);
+    }
+    100% {
+      width: 0px;
+    }
+  }
 </style>
