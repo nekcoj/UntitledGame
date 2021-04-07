@@ -69,7 +69,6 @@ export default function Movement() {
         }
       }
     })
-
     
     movement.placeCharacter = { x: movement.x * pixelSize, y: movement.y * pixelSize}
   }

@@ -74,26 +74,25 @@ export default {
     onMounted(async () => {
       await loadLevel();
       loadCharacterOnMap();
-
       step();
-      gameWindow.value.addEventListener('mousedown', (event) => {
-        const { x, y } = event.target.getBoundingClientRect();
-        const mouseX = event.clientX - x;
-        const mouseY = event.clientY - y;
-        console.log(mouseX, mouseY);
-      })
+      map.value.addEventListener('mousemove', e => {
+        const { x, y } = e.target.getBoundingClientRect();
+        movement.mousePosition.x = e.clientX - x;
+        movement.mousePosition.y = e.clientY - y;
+      });
 
       document.addEventListener('keydown', e => {
         if(e.code === 'KeyZ') {
           let coords = getCoordinates();
           console.log(coords);
         }
-      })
+      });
+
       document.addEventListener('keydown', e => {
         if(e.code === 'KeyX') {
           collision();
         }
-      })
+      });
     })
 
     return {
@@ -177,6 +176,7 @@ body{
   width: var(--grid-cell);
   height: var(--grid-cell);
   position: absolute;
+  pointer-events: none;
   /* background: red; 
   border: 1px solid black; */
 }

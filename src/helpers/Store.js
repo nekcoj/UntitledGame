@@ -10,6 +10,10 @@ const movement = reactive({
   placeCharacter: {
     x: 0,
     y: 0,
+  },
+  mousePosition: {
+    x: 0,
+    y: 0,
   }
 });
 const gameState = reactive({
@@ -40,6 +44,20 @@ const characterState = reactive({
       cooldown: 2,
       effect: () => {
         console.log('FIREBALL!');
+        let root = document.documentElement;
+        root.style.setProperty('--mouse-x', movement.mousePosition.x + 'px');
+        root.style.setProperty('--mouse-y', movement.mousePosition.y + 'px');
+        let fireball = document.createElement('div');
+        let posX = character.value.getAttribute('posx');
+        let posY = character.value.getAttribute('posy');
+        let size = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size')) * 16) / 2;
+        fireball.style.left = parseInt(posX) + (size / 2) + 'px';
+        fireball.style.top = parseInt(posY) + (size / 2) + 'px';
+        root.style.setProperty('--spell-start-x', parseInt(posX) + (size / 2) + 'px');
+        root.style.setProperty('--spell-start-y', parseInt(posY) + (size / 2) + 'px');
+        fireball.classList.add('attackSpell');
+        fireball.style.animationDuration = '0.7s';
+        map.value.appendChild(fireball);
       }
     },
     {

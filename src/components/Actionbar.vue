@@ -33,6 +33,7 @@ export default {
             performAction(e.code);
             break;
           case 'Digit2':
+            console.log(e);
             performAction(e.code);
             break;
           case 'Digit3':
@@ -65,7 +66,7 @@ export default {
     display: flex;
     position: absolute;
     width: calc(var(--grid-cell) * 3 + 10);
-    height: var(--grid-cell);
+    height: calc(var(--grid-cell) + 10);
     border: 3px solid wheat;
     background-color: wheat;
     bottom: 0;
@@ -111,12 +112,32 @@ export default {
     animation-timing-function: linear;
   }
 
+  .attackSpell{
+    width: calc(var(--grid-cell) / 2);
+    height: calc(var(--grid-cell) / 2);
+    background-color: black;
+    position: absolute;
+    animation: attackSpell;
+    animation-timing-function: linear;
+  }
+
   @keyframes cooldown {
     0% {
       width: var(--grid-cell);
     }
     100% {
       width: 0px;
+    }
+  }
+
+  @keyframes attackSpell {
+    from {
+      left: var(--spell-start-x);
+      top: var(--spell-start-y);
+    }
+    to {
+      left: var(--mouse-x);
+      top: var(--mouse-y);
     }
   }
 </style>
