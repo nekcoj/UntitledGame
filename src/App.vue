@@ -1,6 +1,9 @@
 <template>
     <div id="gameWindow" ref="gameWindow">
       <Health :max="characterState.maxHealth" :current="characterState.currentHealth"/>
+      <Spellbook
+        v-if="toggle.spellbook"
+      />
       <div class="actionbar-container">
         <Actionbar class="actionbar"/>
       </div>
@@ -25,6 +28,7 @@
             hp
             <button @click="characterState.setHealth(-5)">-5</button>
           </p>
+          <p>Spellbook: T</p>
         </div>
       </teleport>
       <!-- For testing purposes END -->
@@ -32,22 +36,25 @@
 </template>
 
 <script>
-import { onMounted, watchEffect } from 'vue';
+import { onMounted, watchEffect, reactive } from 'vue';
 import Character from './components/Character'
 import Movement from './helpers/Movement';
 import Store from './helpers/Store';
 import GameSetup from './helpers/GameSetup';
 import Health from './components/Health';
 import Actionbar from './components/Actionbar';
+import Spellbook from './components/Spellbook';
 
 export default {
   name: 'App',
-  component: { Character, Health, Actionbar },
+  component: { Character, Health, Actionbar, Spellbook },
   setup() {
     const { loadLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap, collision } = Movement();
     const { movement, map, character, gameWindow, pixelSize, gameState, characterState } = Store();
-    
+    const toggle = reactive({
+      spellbook: false,
+    });
     const step = () => {
       placeCharacter();
       window.requestAnimationFrame(() => {
@@ -82,33 +89,40 @@ export default {
       });
 
       document.addEventListener('keydown', e => {
-        if(e.code === 'KeyZ') {
-          let coords = getCoordinates();
-          console.log(coords);
-        }
-      });
-
-      document.addEventListener('keydown', e => {
-        if(e.code === 'KeyX') {
-          collision();
+        let coords;
+        switch(e.code) {
+          case 'KeyZ':
+            coords = getCoordinates();
+            console.log(coords);
+            break;
+          case 'KeyX':
+            collision();
+            break;
+          case 'KeyT':
+            toggle.spellbook = !toggle.spellbook;
+            break;
+          default:
+            break;
         }
       });
     })
 
     return {
-      movement,
       map,
-      gameWindow,
+      toggle,
+      movement,
       character,
-      getCoordinates,
       collision,
+      gameWindow,
       characterState,
+      getCoordinates,
     }
   }
 }
 </script>
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap');
 :root{
   --pixel-size: 2px;
   --grid-cell: calc(var(--pixel-size) * 16);
@@ -133,9 +147,10 @@ body{
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-font-smoothing: grayscale; */
   text-align: center;
   color: #2c3e50;
 }

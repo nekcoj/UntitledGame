@@ -122,6 +122,17 @@ export default {
     animation-timing-function: linear;
   }
 
+  .heal{
+    width: calc(var(--grid-cell));
+    height: calc(var(--grid-cell));
+    top: 5px;
+    background: url('../assets/heal.gif') no-repeat no-repeat;
+    background-size: 100%;
+    display: flex;
+    position: absolute;
+    z-index: 2;
+  }
+
   @keyframes cooldown {
     0% {
       width: var(--grid-cell);

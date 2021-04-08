@@ -43,24 +43,32 @@ export default function Movement() {
       const charX = character.value.getBoundingClientRect().x;
       const charY = character.value.getBoundingClientRect().y;
       const size = 16 * pixelSize;
-      if (x < charX + size - 2 && x + size > charX + 2 && y < charY + (size / 2) + 1 && y + (size / 2) + 1 > charY ) {
+      if (x < charX + size - 3 && x + size > charX + 3 && y < charY + (size) && y + (size / 2) > charY ) {
         isBlocked = true;
         if(isBlocked){
           switch(movement.facing) {
             case 'up':
-              console.log('UP - nope');
+              if (charX + (size / 2) > x + (size / 2)) {
+                movement.x += 1;
+              }
+              if (charX + (size / 2) < x + (size / 2)){
+                movement.x -= 1;
+              }
               movement.y += 1;
               break;
             case 'down':
-              console.log('DOWN - nope');
+              if (x + size <= charX + (size / 2)) {
+                movement.x += 1;
+              }
+              if (charX + (size / 2)  < x) {
+                movement.x -= 1;
+              }
               movement.y -= 1;
               break;
             case 'left':
-              console.log('LEFT - nope');
               movement.x += 1; 
               break;
             case 'right':
-              console.log('RIGHT - nope');
               movement.x -= 1;
               break;
             default:

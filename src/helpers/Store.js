@@ -41,6 +41,7 @@ const characterState = reactive({
         x: 1,
         y: 0,
       },
+      type: 'attack',
       cooldown: 1,
       distance: 200,
       effect: () => {
@@ -48,29 +49,30 @@ const characterState = reactive({
         let root = document.documentElement;
         root.style.setProperty('--spell-end-x', movement.mousePosition.x + 'px');
         root.style.setProperty('--spell-end-y', movement.mousePosition.y + 'px');
-        let fireball = document.createElement('div');
+        let spell = document.createElement('div');
         let posX = character.value.getAttribute('posx');
         let posY = character.value.getAttribute('posy');
         let size = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size')) * 16) / 2;
-        fireball.style.left = parseInt(posX) + (size / 2) + 'px';
-        fireball.style.top = parseInt(posY) + (size / 2) + 'px';
+        spell.style.left = parseInt(posX) + (size / 2) + 'px';
+        spell.style.top = parseInt(posY) + (size / 2) + 'px';
         root.style.setProperty('--spell-start-x', parseInt(posX) + (size / 2) + 'px');
         root.style.setProperty('--spell-start-y', parseInt(posY) + (size / 2) + 'px');
         let duration = 0.7;
-        fireball.style.animationDuration = duration + 's';
+        spell.style.animationDuration = duration + 's';
         let dy = movement.mousePosition.y - (parseInt(posY) + (size / 2));
         let dx = movement.mousePosition.x - (parseInt(posX) + (size / 2));
         let theta = Math.atan2(dy, dx);
         theta *= 180 / Math.PI;
-        fireball.style.transform = `rotate(${theta}deg)`;
-        fireball.classList.add('attackSpell');
-        map.value.appendChild(fireball);
+        spell.style.transform = `rotate(${theta}deg)`;
+        spell.classList.add('attackSpell');
+        map.value.appendChild(spell);
         
         setTimeout(() => {
-          fireball.remove();
+          spell.remove();
         }, duration * 1000);
 
-      }
+      },
+      description: "It's a Fireball!",
     },
     {
       name: 'Nånting',
@@ -79,10 +81,12 @@ const characterState = reactive({
         x: 4,
         y: 2,
       },
+      type: 'attack',
       cooldown: 10,
       effect: () => {
         console.log('NÅNTING!');
-      }
+      },
+      description: "Does something? or nothing?",
     },
     {
       name: 'Heal',
@@ -91,10 +95,18 @@ const characterState = reactive({
         x: 5,
         y: 3,
       },
+      type: 'support',
       cooldown: 5,
       effect: (spellNumber) => {
+        let char = document.getElementById('character_shadow');
+        char.classList.add('heal');
+        setTimeout(() => {
+          char.classList.remove('heal');
+        }, 600);
+
         characterState.setHealth(characterState.activeSkills[spellNumber].baseDamage);
       },
+      description: "Heal yourself!",
     },
   ]
   
