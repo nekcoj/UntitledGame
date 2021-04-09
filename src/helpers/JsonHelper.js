@@ -1,7 +1,7 @@
 export default function JsonHelper() {
 
-  async function readJsonFile() {
-    return require('../assets/levels.json');
+  async function readJsonFile(filename) {
+    return require(`../assets/${filename}.json`);
   }
 
   return { readJsonFile }

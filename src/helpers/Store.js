@@ -23,6 +23,7 @@ const gameState = reactive({
     height: 20,
   },
   level: null,
+  enemies: null,
 })
 
 const characterState = reactive({

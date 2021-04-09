@@ -1,7 +1,7 @@
 import Store from './Store';
 
 export default function Movement() {
-  const { movement, directions, map, pixelSize, gameState, character } = Store();
+  const { movement, directions, pixelSize, gameState, character, characterState } = Store();
 
   const placeCharacter = () => {
     const held_direction = movement.held_directions[0];
@@ -24,6 +24,7 @@ export default function Movement() {
     if (movement.y > bottomLimit) { movement.y = bottomLimit; }
     
     checkIfBlockedTile();
+    //checkEnemyCollision();
   }
 
   const getCoordinates = () => {
@@ -31,13 +32,10 @@ export default function Movement() {
   }
 
   const checkIfBlockedTile = () => {
-    /**
-     * 0 = Blocked
-     * 1 = Not Blocked 
-     * 
-     *  */
     let isBlocked = false;
-    const collDivs = document.querySelectorAll('.obstacle');
+    const collDivs = Array.from(document.querySelectorAll('.obstacle'));
+    const enemies = Array.from(document.querySelectorAll('.enemy'));
+    enemies.forEach(enemy => collDivs.push(enemy));
     collDivs.forEach(div => {
       const { x, y } = div.getBoundingClientRect();
       const charX = character.value.getBoundingClientRect().x;
@@ -46,6 +44,11 @@ export default function Movement() {
       if (x < charX + size - 3 && x + size > charX + 3 && y < charY + (size) && y + (size / 2) > charY ) {
         isBlocked = true;
         if(isBlocked){
+          let pushback = 1;
+          if (div.classList.contains('enemy')) {
+            characterState.setHealth(-5);
+            pushback = 15;
+          }
           switch(movement.facing) {
             case 'up':
               if (charX + (size / 2) > x + (size / 2)) {
@@ -54,7 +57,7 @@ export default function Movement() {
               if (charX + (size / 2) < x + (size / 2)){
                 movement.x -= 1;
               }
-              movement.y += 1;
+              movement.y += pushback;
               break;
             case 'down':
               if (x + size <= charX + (size / 2)) {
@@ -63,13 +66,13 @@ export default function Movement() {
               if (charX + (size / 2)  < x) {
                 movement.x -= 1;
               }
-              movement.y -= 1;
+              movement.y -= pushback;
               break;
             case 'left':
-              movement.x += 1; 
+              movement.x += pushback; 
               break;
             case 'right':
-              movement.x -= 1;
+              movement.x -= pushback;
               break;
             default:
               break;
@@ -85,36 +88,14 @@ export default function Movement() {
     gameState.level.blocked.forEach((row, i) => {
       row.forEach((column, j) => {
         if(column === 5) {
-          let camera_left = pixelSize * 132;
-          let camera_top = pixelSize * 84;
-          movement.placeCharacter.x = j * pixelSize;
-          movement.placeCharacter.y = i * pixelSize;
-          movement.x = j * pixelSize * 8;
-          movement.y = i * pixelSize * 8;
-          map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0 )`;
+          movement.x = j * pixelSize * 16 / 2;
+          movement.y = i * pixelSize * 16 / 2;
         }
       });
     });
   }
 
-  const collision = () => {
-    const collElems = document.querySelectorAll('.obstacle');
-    collElems.forEach( div => {
-      if (
-        div.getBoundingClientRect().left < movement.placeCharacter.x + (16 * pixelSize) &&
-        div.getBoundingClientRect().left + (16 * pixelSize) > movement.placeCharacter.x &&
-        div.getBoundingClientRect().top < movement.placeCharacter.y + (16 * pixelSize) &&
-        div.getBoundingClientRect().top + (16 * pixelSize) > movement.placeCharacter.y) {
-          console.log('collision!');
-      }
-    })
-    console.log(collElems);
-    console.log(character.value.getAttribute('posx'));
-  }
-
-
   return {
-    collision,
     placeCharacter,
     getCoordinates,
     checkIfBlockedTile,

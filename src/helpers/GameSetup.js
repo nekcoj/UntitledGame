@@ -3,10 +3,10 @@ import Store from './Store';
 
 export default function GameSetup() {
   const { readJsonFile } = JsonHelper();
-  const { map, gameState, pixelSize } = Store();
+  const { map, gameState } = Store();
 
   async function loadLevel() {
-    const levels = await readJsonFile()
+    const levels = await readJsonFile('levels')
     gameState.level = levels[gameState.currentLevel];
   }
 
@@ -16,15 +16,26 @@ export default function GameSetup() {
         if (col === 0) {
           let el = document.createElement('div');
           el.classList.add('obstacle')
-          el.style.top = i * (16 * pixelSize)+'px';
-          el.style.left = j * (16 * pixelSize) + 'px';
+          el.style.top = `calc(${i} * var(--grid-cell))`;
+          el.style.left = `calc(${j} * var(--grid-cell))`;
           map.value.appendChild(el);
         }
-      })
-    }) 
+      });
+    }); 
+  }
+
+  function setupLevel() {
+    loadLevel();
+    loadEnemies();
+  }
+
+  async function loadEnemies() {
+    const enemies = await readJsonFile('enemies');
+    gameState.enemies = enemies;
   }
   return {
-    loadLevel,
+    setupLevel,
+    loadEnemies,
     loadObstacles,
   }
 }

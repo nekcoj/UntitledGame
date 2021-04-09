@@ -6,7 +6,7 @@
         <div class="icon">
           <div
             class="spell-icon"
-            :style="{ backgroundPositionX: -(skill.iconPosition.x * 16 * pixelSize) +'px', backgroundPositionY: -(skill.iconPosition.y * 16 * pixelSize) +'px' }"
+            :style="{ backgroundPositionX: `calc(-${skill.iconPosition.x} * var(--grid-cell)`, backgroundPositionY: `calc(-${skill.iconPosition.y} * var(--grid-cell)`}"
           ></div>
         </div>
         <div class="spell-name">
@@ -28,9 +28,9 @@ import Store from '../helpers/Store';
 export default {
   name: 'Spellbook',
   setup() {
-    const { characterState, pixelSize } = Store();
+    const { characterState } = Store();
     
-    return { characterState, pixelSize }
+    return { characterState }
   }
 }
 </script>

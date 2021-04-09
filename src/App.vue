@@ -14,6 +14,9 @@
           :posx="movement.placeCharacter.x"
           :posy="movement.placeCharacter.y"
         />
+
+        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" :enemy="enemy" :index="index" />
+        
       </div>
 
 
@@ -29,6 +32,8 @@
             <button @click="characterState.setHealth(-5)">-5</button>
           </p>
           <p>Spellbook: T</p>
+          <p>Aim with your mouse!</p>
+          <p>Beware the "goblins"!</p>
         </div>
       </teleport>
       <!-- For testing purposes END -->
@@ -44,17 +49,19 @@ import GameSetup from './helpers/GameSetup';
 import Health from './components/Health';
 import Actionbar from './components/Actionbar';
 import Spellbook from './components/Spellbook';
+import Enemy from './components/Enemy';
 
 export default {
   name: 'App',
-  component: { Character, Health, Actionbar, Spellbook },
+  component: { Character, Health, Actionbar, Spellbook, Enemy },
   setup() {
-    const { loadLevel, loadObstacles } = GameSetup();
-    const { placeCharacter, getCoordinates, loadCharacterOnMap, collision } = Movement();
+    const { setupLevel, loadObstacles } = GameSetup();
+    const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
     const { movement, map, character, gameWindow, pixelSize, gameState, characterState } = Store();
     const toggle = reactive({
       spellbook: false,
     });
+
     const step = () => {
       placeCharacter();
       window.requestAnimationFrame(() => {
@@ -69,7 +76,7 @@ export default {
         map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0 )`;
       }
       if(gameState.currentLevel) {
-        loadLevel();
+        setupLevel();
       }
     })
     watchEffect(() => {
@@ -79,7 +86,7 @@ export default {
     })
     
     onMounted(async () => {
-      await loadLevel();
+      await setupLevel();
       loadCharacterOnMap();
       step();
       map.value.addEventListener('mousemove', e => {
@@ -95,11 +102,11 @@ export default {
             coords = getCoordinates();
             console.log(coords);
             break;
-          case 'KeyX':
-            collision();
-            break;
           case 'KeyT':
             toggle.spellbook = !toggle.spellbook;
+            break;
+          case 'KeyX':
+            console.log(gameState.enemies);
             break;
           default:
             break;
@@ -112,7 +119,7 @@ export default {
       toggle,
       movement,
       character,
-      collision,
+      gameState,
       gameWindow,
       characterState,
       getCoordinates,
@@ -192,8 +199,9 @@ body{
   height: var(--grid-cell);
   position: absolute;
   pointer-events: none;
-  /* background: red; 
-  border: 1px solid black; */
+  background: red; 
+  border: 1px solid black;
+  opacity: 0.5;
 }
 
 </style>

@@ -7,7 +7,7 @@
   >
     <div
       class="action-image pixelart"
-      :style="{ backgroundPositionX: -(skill.iconPosition.x * 16 * pixelSize) +'px', backgroundPositionY: -(skill.iconPosition.y * 16 * pixelSize) +'px' }"
+      :style="{ backgroundPositionX: `calc(-${skill.iconPosition.x} * var(--grid-cell)`, backgroundPositionY: `calc(-${skill.iconPosition.y} * var(--grid-cell)`}"
     />
     <div :id="'skill-'+index" class="cooldown">
     <span class="actionbar-text">{{index+1}}</span>
@@ -24,7 +24,7 @@ import Store from '../helpers/Store';
 export default {
   name: 'Actionbar',
   setup() {
-    const { characterState, pixelSize } = Store();
+    const { characterState } = Store();
 
     onMounted(() => {
       document.addEventListener('keydown', e => {
@@ -56,7 +56,7 @@ export default {
         action.classList.remove('onCooldown')
       }, (characterState.activeSkills[spellNumber].cooldown * 1000));
     }
-    return { characterState, pixelSize }
+    return { characterState }
   }
 }
 </script>
