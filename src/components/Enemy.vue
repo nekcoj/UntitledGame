@@ -1,13 +1,13 @@
 <template>
   <div :id="'enemy-'+index" class="enemy" :ref="el => {enemyPosRefs[index] = el}">
-    <p>{{enemy.name}}</p>
-    <p>{{enemy.currentHealth}}/{{enemy.maxHealth}}</p>
+    <p>{{enemyObj.name}}</p>
+    <p>{{enemyObj.currentHealth}}/{{enemyObj.maxHealth}}</p>
     
   </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import Store from '../helpers/Store';
 export default {
   name: 'Enemy',
@@ -18,6 +18,7 @@ export default {
   setup(props) {
     const { gameState, enemyPosRefs } = Store();
     const enemyTiles = [];
+    const enemyObj = ref(Object.assign({}, props.enemy));
 
     const getEnemyTiles = () => {
       gameState.level.blocked.forEach((row, i) => {
@@ -37,13 +38,19 @@ export default {
       }
     }
 
+    const setHealth = (crementValue) => {
+      console.log(enemyObj);
+      enemyObj.value.currentHealth = enemyObj.value.currentHealth + crementValue > enemyObj.value.maxHealth ?
+        enemyObj.value.maxHealth : enemyObj.value.currentHealth + crementValue <= 0 ? 0 : enemyObj.value.currentHealth += crementValue;
+    }
+
 
     onMounted(() => {
       getEnemyTiles();
       placeEnemy();
     })
 
-    return { enemyPosRefs }
+    return { enemyObj, enemyPosRefs, setHealth }
   }
 }
 </script>

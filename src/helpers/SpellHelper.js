@@ -37,7 +37,7 @@ export default function SpellHelper() {
     const spellX = spell.getBoundingClientRect().x;
     const spellY = spell.getBoundingClientRect().y;
     const size = 16 * pixelSize;
-    if (x < spellX + size && x + size > spellX && y < spellY + size && y + size > spellY) {
+    if (x < spellX + (size / 2) && x + (size / 2) > spellX && y < spellY + size && y + size > spellY) {
       return true;
     }
     return false;
@@ -46,7 +46,8 @@ export default function SpellHelper() {
   const spellOnHitAction = (spellElement, collisionElement) => {
     const spell = characterState.activeSkills.find(spell => spell.name.toLowerCase() === Array.from(spellElement.classList)[0]);
     const target = collisionElement.getAttribute('player') === 'true' ? character : enemyRefs.value[parseInt(collisionElement.getAttribute('id').split('enemy-')[1])];
-    collisionElement.getAttribute('player') === 'true' ? characterState.setHealth(-spell.baseDamage) : target.enemy.currentHealth -= spell.baseDamage;
+    //collisionElement.getAttribute('player') === 'true' ? characterState.setHealth(-spell.baseDamage) : target.enemy.currentHealth -= spell.baseDamage;
+    target.setHealth(-spell.baseDamage);
     console.log('Hit! You sunk my battleship!');
   }
 

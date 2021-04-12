@@ -119,7 +119,7 @@ export default {
 
   .fireball{
     width: calc(var(--grid-cell));
-    height: calc(var(--grid-cell));
+    height: calc(var(--grid-cell) / 2);
     background: url('../assets/fireball.gif') no-repeat no-repeat;
     background-size: 100%;
     position: absolute;
