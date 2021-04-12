@@ -13,9 +13,10 @@
           :walking="movement.isWalking"
           :posx="movement.placeCharacter.x"
           :posy="movement.placeCharacter.y"
+          player="true"
         />
 
-        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" :enemy="enemy" :index="index" />
+        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
         
       </div>
 
@@ -32,6 +33,7 @@
             <button @click="characterState.setHealth(-5)">-5</button>
           </p>
           <p>Spellbook: T</p>
+          <p>Spell 2 not yet implemented!</p>
           <p>Aim with your mouse!</p>
           <p>Beware the "goblins"!</p>
         </div>
@@ -57,7 +59,8 @@ export default {
   setup() {
     const { setupLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
-    const { movement, map, character, gameWindow, pixelSize, gameState, characterState } = Store();
+    const { movement, map, character, gameWindow, gameState, characterState, enemyRefs } = Store();
+
     const toggle = reactive({
       spellbook: false,
     });
@@ -71,9 +74,10 @@ export default {
 
     watchEffect(() => {
       if (movement.x || movement.y) {
+        let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
         let camera_left = pixelSize * 132;
         let camera_top = pixelSize * 84;
-        map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0 )`;
+        map.value.style.transform = `translate3d( ${-movement.x*pixelSize+camera_left}px, ${-movement.y*pixelSize+camera_top}px, 0)`;
       }
       if(gameState.currentLevel) {
         setupLevel();
@@ -94,7 +98,7 @@ export default {
         movement.mousePosition.x = e.clientX - x;
         movement.mousePosition.y = e.clientY - y;
       });
-
+      
       document.addEventListener('keydown', e => {
         let coords;
         switch(e.code) {
@@ -105,9 +109,10 @@ export default {
           case 'KeyT':
             toggle.spellbook = !toggle.spellbook;
             break;
-          case 'KeyX':
+          case 'KeyX': {
             console.log(gameState.enemies);
             break;
+          }
           default:
             break;
         }
@@ -119,6 +124,7 @@ export default {
       toggle,
       movement,
       character,
+      enemyRefs,
       gameState,
       gameWindow,
       characterState,

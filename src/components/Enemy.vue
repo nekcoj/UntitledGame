@@ -1,6 +1,8 @@
 <template>
-  <div :id="'enemy-'+index" class="enemy">
-    {{enemy.name}}
+  <div :id="'enemy-'+index" class="enemy" :ref="el => {enemyPosRefs[index] = el}">
+    <p>{{enemy.name}}</p>
+    <p>{{enemy.currentHealth}}/{{enemy.maxHealth}}</p>
+    
   </div>
 </template>
 
@@ -14,7 +16,7 @@ export default {
     index: Number,
   },
   setup(props) {
-    const { gameState } = Store();
+    const { gameState, enemyPosRefs } = Store();
     const enemyTiles = [];
 
     const getEnemyTiles = () => {
@@ -41,18 +43,23 @@ export default {
       placeEnemy();
     })
 
-    return {}
+    return { enemyPosRefs }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
   .enemy{
     width: var(--grid-cell);
     height: var(--grid-cell);
     background-color: teal;
     pointer-events: none;
     position: absolute;
+    p {
+      padding: 0;
+      margin: 0;
+      font-size: 0.7rem;
+    }
   }
 
 </style>

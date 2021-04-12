@@ -21,10 +21,13 @@
 <script>
 import { onMounted } from 'vue';
 import Store from '../helpers/Store';
+import SpellHelper from '../helpers/SpellHelper';
+
 export default {
   name: 'Actionbar',
   setup() {
     const { characterState } = Store();
+    const { castSkill } = SpellHelper();
 
     onMounted(() => {
       document.addEventListener('keydown', e => {
@@ -51,11 +54,13 @@ export default {
       if (action.classList.contains('onCooldown')) return;
       action.classList.add('onCooldown');
       action.style.animationDuration = characterState.activeSkills[spellNumber].cooldown + 's';
-      characterState.activeSkills[spellNumber].effect(spellNumber);
+      //characterState.activeSkills[spellNumber].effect(spellNumber);
+      castSkill(spellNumber);
       setTimeout(() => {
         action.classList.remove('onCooldown')
       }, (characterState.activeSkills[spellNumber].cooldown * 1000));
     }
+
     return { characterState }
   }
 }
@@ -112,7 +117,7 @@ export default {
     animation-timing-function: linear;
   }
 
-  .attackSpell{
+  .fireball{
     width: calc(var(--grid-cell));
     height: calc(var(--grid-cell));
     background: url('../assets/fireball.gif') no-repeat no-repeat;

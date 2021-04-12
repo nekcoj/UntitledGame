@@ -1,9 +1,10 @@
 import Store from './Store';
 
 export default function Movement() {
-  const { movement, directions, pixelSize, gameState, character, characterState } = Store();
+  const { movement, directions, gameState, character, characterState } = Store();
 
   const placeCharacter = () => {
+    let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
     const held_direction = movement.held_directions[0];
     if (held_direction) {
       if (held_direction === directions.right) { movement.x += movement.speed; }
@@ -24,14 +25,15 @@ export default function Movement() {
     if (movement.y > bottomLimit) { movement.y = bottomLimit; }
     
     checkIfBlockedTile();
-    //checkEnemyCollision();
   }
 
   const getCoordinates = () => {
+    let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
     return [Math.floor(movement.placeCharacter.x / (pixelSize * 16)), Math.floor(movement.placeCharacter.y / (pixelSize * 16))]
   }
 
   const checkIfBlockedTile = () => {
+    let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
     let isBlocked = false;
     const collDivs = Array.from(document.querySelectorAll('.obstacle'));
     const enemies = Array.from(document.querySelectorAll('.enemy'));
@@ -47,7 +49,7 @@ export default function Movement() {
           let pushback = 1;
           if (div.classList.contains('enemy')) {
             characterState.setHealth(-5);
-            pushback = 15;
+            pushback = 5;
           }
           switch(movement.facing) {
             case 'up':
@@ -88,8 +90,8 @@ export default function Movement() {
     gameState.level.blocked.forEach((row, i) => {
       row.forEach((column, j) => {
         if(column === 5) {
-          movement.x = j * pixelSize * 16 / 2;
-          movement.y = i * pixelSize * 16 / 2;
+          movement.x = j * 16;
+          movement.y = i * 16;
         }
       });
     });
