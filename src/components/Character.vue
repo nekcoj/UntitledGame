@@ -1,5 +1,5 @@
 <template>
-  <div class="character" ref="character" :facing="facing" :walking="walking" :posx="posx" :posy="posy">
+  <div class="character" :facing="facing" :walking="walking" :posx="posx" :posy="posy">
     <div id="character_sprite" class="character_sprite pixelart"></div>
     <div id="character_shadow" class="character_shadow pixelart"></div>
   </div>
@@ -19,12 +19,12 @@ export default {
     posy: Number,
   },
   setup (props) {
-    const { keys, movement, character } = Store();
+    const { keys, movement, character, characterState } = Store();
     
 
     watchEffect(() => {
       if(props.posx || props.posy) {
-        character.value.style.transform = `translate3d( ${props.posx}px, ${props.posy}px, 0 )`;
+        character.value.$el.style.transform = `translate3d( ${props.posx}px, ${props.posy}px, 0 )`;
       }
     });
 
@@ -43,7 +43,12 @@ export default {
         }
       });
     })
-    return { character }
+
+    const setHealth = (crementValue) => {
+      characterState.currentHealth = characterState.currentHealth + crementValue > characterState.maxHealth ?
+        characterState.maxHealth : characterState.currentHealth + crementValue <= 0 ? 0 : characterState.currentHealth += crementValue;
+    }
+    return { character, setHealth }
   }
 }
 </script>
@@ -76,6 +81,7 @@ export default {
     background-size: 100%;
     width: calc(var(--grid-cell) * 3);
     height: calc(var(--grid-cell) * 3);
+    z-index: 2;
   }
 
   .character[facing="left"] .character_sprite {

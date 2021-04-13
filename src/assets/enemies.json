@@ -1,31 +1,31 @@
 [
   {
-    "name": "Goblin",
-    "sprite": "",
+    "name": "Skeleton",
+    "sprite": "/Enemy04-1.png",
     "maxHealth": 50,
     "currentHealth": 50
   },
   {
-    "name": "Goblin",
-    "sprite": "",
+    "name": "Skeleton",
+    "sprite": "/Enemy04-1.png",
     "maxHealth": 50,
     "currentHealth": 50
   },
   {
-    "name": "Goblin",
-    "sprite": "",
+    "name": "Zombie King",
+    "sprite": "/Enemy01-1.png",
     "maxHealth": 50,
     "currentHealth": 50
   },
   {
-    "name": "Goblin",
-    "sprite": "",
+    "name": "Ghost",
+    "sprite": "/Enemy09-1.png",
     "maxHealth": 50,
     "currentHealth": 50
   },
   {
-    "name": "Goblin",
-    "sprite": "",
+    "name": "Soot sprite",
+    "sprite": "/Enemy17-7.png",
     "maxHealth": 50,
     "currentHealth": 50
   }

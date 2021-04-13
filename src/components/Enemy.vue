@@ -1,8 +1,11 @@
 <template>
-  <div :id="'enemy-'+index" class="enemy" :ref="el => {enemyPosRefs[index] = el}">
-    <p>{{enemyObj.name}}</p>
-    <p>{{enemyObj.currentHealth}}/{{enemyObj.maxHealth}}</p>
-    
+  <div :id="'enemy-'+index" class="enemy">
+    <div :id="'enemy_sprite-'+index" class="enemy_sprite pixelart"></div>
+    <div id="enemy_shadow" class="character_shadow pixelart"></div>
+    <!-- <div class="enemy_text">
+      <p>{{enemyObj.name}}</p>
+      <p>{{enemyObj.currentHealth}}/{{enemyObj.maxHealth}}</p>
+    </div> -->
   </div>
 </template>
 
@@ -16,7 +19,7 @@ export default {
     index: Number,
   },
   setup(props) {
-    const { gameState, enemyPosRefs } = Store();
+    const { gameState } = Store();
     const enemyTiles = [];
     const enemyObj = ref(Object.assign({}, props.enemy));
 
@@ -44,13 +47,22 @@ export default {
         enemyObj.value.maxHealth : enemyObj.value.currentHealth + crementValue <= 0 ? 0 : enemyObj.value.currentHealth += crementValue;
     }
 
+    const setSprite = () => {
+      const enemySprite = document.querySelector(`#enemy_sprite-${props.index}`)
+      let url = '../assets/Enemy' + enemyObj.value.sprite;
+      console.log(url);
+      enemySprite.style.background = 'url(' + `${require('../assets/Enemy' + enemyObj.value.sprite)}` + ') no-repeat no-repeat';
+      enemySprite.style.backgroundSize = '100%';
+      //test\src\assets\Enemy\Enemy04-1.png
+    }
 
     onMounted(() => {
+      setSprite();
       getEnemyTiles();
       placeEnemy();
     })
 
-    return { enemyObj, enemyPosRefs, setHealth }
+    return { enemyObj, setHealth }
   }
 }
 </script>
@@ -59,14 +71,28 @@ export default {
   .enemy{
     width: var(--grid-cell);
     height: var(--grid-cell);
-    background-color: teal;
+    //background-color: teal;
     pointer-events: none;
     position: absolute;
+    overflow: hidden;
     p {
       padding: 0;
       margin: 0;
       font-size: 0.7rem;
     }
+  }
+
+  .enemy_sprite {
+    position: absolute;
+    width: calc(var(--grid-cell) * 3);
+    height: calc(var(--grid-cell) * 3);
+    z-index: 1;
+  }
+
+  .enemy_text {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
 </style>

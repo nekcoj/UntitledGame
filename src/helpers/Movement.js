@@ -1,7 +1,7 @@
 import Store from './Store';
 
 export default function Movement() {
-  const { movement, directions, gameState, character, characterState } = Store();
+  const { movement, directions, gameState, character } = Store();
 
   const placeCharacter = () => {
     let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
@@ -40,15 +40,15 @@ export default function Movement() {
     enemies.forEach(enemy => collDivs.push(enemy));
     collDivs.forEach(div => {
       const { x, y } = div.getBoundingClientRect();
-      const charX = character.value.getBoundingClientRect().x;
-      const charY = character.value.getBoundingClientRect().y;
+      const charX = character.value.$el.getBoundingClientRect().x;
+      const charY = character.value.$el.getBoundingClientRect().y;
       const size = 16 * pixelSize;
       if (x < charX + size - 3 && x + size > charX + 3 && y < charY + (size) && y + (size / 2) > charY ) {
         isBlocked = true;
         if(isBlocked){
           let pushback = 1;
           if (div.classList.contains('enemy')) {
-            characterState.setHealth(-5);
+            character.value.setHealth(-5);
             pushback = 5;
           }
           switch(movement.facing) {

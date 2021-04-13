@@ -2,7 +2,9 @@ import Store from './Store';
 
 export default function SpellHelper() {
   const duration = 0.7;
-  const { characterState, character, movement, map, enemyPosRefs, enemyRefs } = Store();
+  const { characterState, character, movement, map,
+    //enemyPosRefs, 
+    enemyRefs } = Store();
   const castSkill = (skillNumber, origin = 'player') => {
     if (characterState.activeSkills[skillNumber].type === 'support') {
       let char = document.getElementById('character_shadow');
@@ -15,9 +17,9 @@ export default function SpellHelper() {
       const spell = animateSpell(skillNumber);
       let collDivs; 
       if ( origin === 'player') {
-        collDivs = enemyPosRefs.value;
+        collDivs = enemyRefs.value.map(enemy => enemy = enemy.$el);
       } else {
-        collDivs = Array.from(character.value);
+        collDivs = Array.from(character.value.$el);
       }
       collDivs.forEach(div => {
         checkSkillHit(spell, div) ? spellOnHitAction(spell, div) : null;
@@ -56,16 +58,16 @@ export default function SpellHelper() {
     root.style.setProperty('--spell-end-x', movement.mousePosition.x + 'px');
     root.style.setProperty('--spell-end-y', movement.mousePosition.y + 'px');
     let spell = document.createElement('div');
-    let posX = character.value.getAttribute('posx');
-    let posY = character.value.getAttribute('posy');
+    let posX = character.value.$el.getAttribute('posx');
+    let posY = character.value.$el.getAttribute('posy');
     let size = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size')) * 16) / 2;
     spell.style.left = parseInt(posX) + (size / 2) + 'px';
     spell.style.x = parseInt(posY) + (size / 2) + 'px';
-    root.style.setProperty('--spell-start-x', parseInt(posX) + (size / 2) + 'px');
-    root.style.setProperty('--spell-start-y', parseInt(posY) + (size / 2) + 'px');
+    root.style.setProperty('--spell-start-x', parseInt(posX) + (size) + 'px');
+    root.style.setProperty('--spell-start-y', parseInt(posY) + (size) + 'px');
     spell.style.animationDuration = duration + 's';
-    let dy = movement.mousePosition.y - (parseInt(posY) + (size / 2));
-    let dx = movement.mousePosition.x - (parseInt(posX) + (size / 2));
+    let dy = movement.mousePosition.y - (parseInt(posY) + (size));
+    let dx = movement.mousePosition.x - (parseInt(posX) + (size));
     let theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI;
     spell.style.transform = `rotate(${theta}deg)`;

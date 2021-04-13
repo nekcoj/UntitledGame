@@ -1,6 +1,6 @@
 <template>
     <div id="gameWindow" ref="gameWindow">
-      <Health :max="characterState.maxHealth" :current="characterState.currentHealth"/>
+      <Health :max="characterState.maxHealth" :current="characterState.currentHealth" player=true />
       <Spellbook
         v-if="toggle.spellbook"
       />
@@ -14,28 +14,31 @@
           :posx="movement.placeCharacter.x"
           :posy="movement.placeCharacter.y"
           player="true"
+          ref="character"
         />
 
         <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
-        
       </div>
+      <div class="target-list">
+        <TargetList />
+      </div>  
 
 
       <!-- For testing purposes START -->
       <teleport to="body">
         <div v-if="character" :style="{position: 'absolute', top: '25px', left: '25px', width: '150px', height: '300px' }">
           <p>{{getCoordinates()}}</p>
-          <p>[{{character.getAttribute('posx')}}, {{character.getAttribute('posy')}}]</p>
+          <p>[{{character.$el.getAttribute('posx')}}, {{character.$el.getAttribute('posy')}}]</p>
           <div>{{characterState.currentHealth}}/{{characterState.maxHealth}}</div>
           <p>
-            <button @click="characterState.setHealth(5)">+5</button>
+            <button @click="character.setHealth(5)">+5</button>
             hp
-            <button @click="characterState.setHealth(-5)">-5</button>
+            <button @click="character.setHealth(-5)">-5</button>
           </p>
           <p>Spellbook: T</p>
           <p>Spell 2 not yet implemented!</p>
           <p>Aim with your mouse!</p>
-          <p>Beware the "goblins"!</p>
+          <p>Beware the "skeletons"!</p>
         </div>
       </teleport>
       <!-- For testing purposes END -->
@@ -52,10 +55,11 @@ import Health from './components/Health';
 import Actionbar from './components/Actionbar';
 import Spellbook from './components/Spellbook';
 import Enemy from './components/Enemy';
+import TargetList from './components/TargetList';
 
 export default {
   name: 'App',
-  component: { Character, Health, Actionbar, Spellbook, Enemy },
+  component: { Character, Health, Actionbar, Spellbook, Enemy, TargetList },
   setup() {
     const { setupLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
@@ -205,9 +209,9 @@ body{
   height: var(--grid-cell);
   position: absolute;
   pointer-events: none;
-  background: red; 
+  /* background: red; 
   border: 1px solid black;
-  opacity: 0.5;
+  opacity: 0.5; */
 }
 
 </style>

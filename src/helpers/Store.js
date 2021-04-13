@@ -30,10 +30,6 @@ const characterState = reactive({
   maxHealth: 100,
   power: 10,
   currentHealth: 85,
-  setHealth: (crementValue) => {
-    characterState.currentHealth = characterState.currentHealth + crementValue > characterState.maxHealth ?
-      characterState.maxHealth : characterState.currentHealth + crementValue <= 0 ? 0 : characterState.currentHealth += crementValue;
-  },
   activeSkills: [
     {
       name: 'Fireball',
@@ -74,7 +70,7 @@ const characterState = reactive({
       type: 'support',
       cooldown: 5,
       effect: (spellNumber) => {
-        characterState.setHealth(characterState.activeSkills[spellNumber].baseDamage);
+        character.value.setHealth(characterState.activeSkills[spellNumber].baseDamage);
       },
       description: "Heal yourself!",
     },
@@ -103,7 +99,6 @@ const keys = {
 const map = ref(null);
 const character = ref(null);
 const gameWindow = ref(null);
-const enemyPosRefs = ref([]);
 const enemyRefs = ref([]);
 
 export default function Store() {
@@ -118,7 +113,6 @@ export default function Store() {
     enemyRefs,
     directions,
     gameWindow,
-    enemyPosRefs,
     characterState,
   }
 }
