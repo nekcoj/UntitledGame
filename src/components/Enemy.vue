@@ -56,11 +56,9 @@ export default {
 
     const setSprite = () => {
       const enemySprite = document.querySelector(`#enemy_sprite-${props.index}`)
-      let url = '../assets/Enemy' + enemyObj.value.sprite;
-      console.log(url);
-      enemySprite.style.background = 'url(' + `${require('../assets/Enemy' + enemyObj.value.sprite)}` + ') no-repeat no-repeat';
+      let file = require('../assets/Enemy' + enemyObj.value.sprite);
+      enemySprite.style.background = `url(${file}) no-repeat no-repeat`;
       enemySprite.style.backgroundSize = '100%';
-      //test\src\assets\Enemy\Enemy04-1.png
     }
 
     onMounted(() => {

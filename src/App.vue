@@ -1,6 +1,6 @@
 <template>
     <div id="gameWindow" ref="gameWindow">
-      <Health :max="characterState.maxHealth" :current="characterState.currentHealth" player=true />
+      <Health :max="characterState.maxHealth" :current="characterState.currentHealth" :player="true" />
       <Spellbook
         v-if="toggle.spellbook"
       />
@@ -17,7 +17,7 @@
           ref="character"
         />
 
-        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
+        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" :player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
       </div>
       <div class="target-list">
         <TargetList />
