@@ -38,7 +38,8 @@
           <p>Spellbook: T</p>
           <p>Spell 2 not yet implemented!</p>
           <p>Aim with your mouse!</p>
-          <p>Beware the "skeletons"!</p>
+          <p>Beware the "monsters"!</p>
+          <button @click="toggle.playMusic = !toggle.playMusic">{{toggle.playMusic ? 'Pause' : 'Play' }}</button>
         </div>
       </teleport>
       <!-- For testing purposes END -->
@@ -67,7 +68,10 @@ export default {
 
     const toggle = reactive({
       spellbook: false,
+      playMusic: true,
     });
+
+    let audio = null;
 
     const step = () => {
       placeCharacter();
@@ -92,6 +96,24 @@ export default {
         loadObstacles();
       }
     })
+
+    watchEffect(() => {
+      if (toggle.playMusic && audio) {
+        audio.play();
+      }
+      
+      if (!toggle.playMusic && audio) {
+        audio.pause();
+      }
+    });
+
+    const playAudio = () => {
+      audio = new Audio(require('./assets/audio/Medieval_Melancholy.wav'));
+      audio.volume = 0.05;
+      audio.autoplay = true;
+      audio.loop = true;
+      audio.play();
+    }
     
     onMounted(async () => {
       await setupLevel();
@@ -102,6 +124,8 @@ export default {
         movement.mousePosition.x = e.clientX - x;
         movement.mousePosition.y = e.clientY - y;
       });
+
+      playAudio();
       
       document.addEventListener('keydown', e => {
         let coords;

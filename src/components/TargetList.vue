@@ -4,7 +4,7 @@
       <div class="container">
         <div class="title">Enemies</div>
         <div class="target" v-for="(enemy, index) in enemyRefs" :key="index">
-          <div class="enemy_name">{{enemy.enemyObj.name}}</div>
+          <div class="enemy_name">{{enemy.enemyObj.currentHealth > 0 ? enemy.enemyObj.name : 'Dead'}}</div>
           <Health class="enemy_health" :max="enemy.enemyObj.maxHealth" :current="enemy.enemyObj.currentHealth"/>
           <!-- <div class="enemy_health_text">{{enemy.enemyObj.currentHealth}}/{{enemy.enemyObj.maxHealth}}</div> -->
         </div>

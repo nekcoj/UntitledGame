@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import Store from '../helpers/Store';
 export default {
   name: 'Enemy',
@@ -42,10 +42,17 @@ export default {
     }
 
     const setHealth = (crementValue) => {
-      console.log(enemyObj);
       enemyObj.value.currentHealth = enemyObj.value.currentHealth + crementValue > enemyObj.value.maxHealth ?
         enemyObj.value.maxHealth : enemyObj.value.currentHealth + crementValue <= 0 ? 0 : enemyObj.value.currentHealth += crementValue;
     }
+
+    watchEffect(() => {
+      if(enemyObj.value.currentHealth === 0){
+        const enemy = document.getElementById('enemy-'+props.index);
+        
+        enemy.remove();
+      }
+    })
 
     const setSprite = () => {
       const enemySprite = document.querySelector(`#enemy_sprite-${props.index}`)

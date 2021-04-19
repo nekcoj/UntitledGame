@@ -1,7 +1,7 @@
 <template>
   <div class="spellbook">
     <div class="container">
-      <div class="title">Active skills</div>
+      <div class="title">Spellbook</div>
       <div class="spell" v-for="(skill, index) in characterState.activeSkills" :key="index">
         <div class="icon">
           <div
