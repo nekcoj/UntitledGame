@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Bertram",
+    "dialogue": [
+      {
+        "string": "Hey!",
+        "speed": 20,
+        "audio": null
+      },
+      {
+        "string": "Have you heard the tragedy of the Super Galaxy Face Melter? It's not a story EC would share.",
+        "speed": 20,
+        "audio": "thetragedy.wav"
+      }
+    ]
+  }
+]

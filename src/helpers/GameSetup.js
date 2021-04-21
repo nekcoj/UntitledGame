@@ -27,12 +27,19 @@ export default function GameSetup() {
   function setupLevel() {
     loadLevel();
     loadEnemies();
+    loadNPCs();
   }
 
   async function loadEnemies() {
     const enemies = await readJsonFile('enemies');
     gameState.enemies = enemies;
   }
+
+  async function loadNPCs() {
+    const npcs = await readJsonFile('npcs');
+    gameState.npcs = npcs;
+  }
+
   return {
     setupLevel,
     loadEnemies,

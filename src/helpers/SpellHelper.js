@@ -2,9 +2,7 @@ import Store from './Store';
 
 export default function SpellHelper() {
   const duration = 0.7;
-  const { characterState, character, movement, map,
-    //enemyPosRefs, 
-    enemyRefs } = Store();
+  const { characterState, character, movement, map, enemyRefs } = Store();
   const castSkill = (skillNumber, origin = 'player') => {
     if (characterState.activeSkills[skillNumber].type === 'support') {
       let char = document.getElementById('character_shadow');
@@ -48,9 +46,7 @@ export default function SpellHelper() {
   const spellOnHitAction = (spellElement, collisionElement) => {
     const spell = characterState.activeSkills.find(spell => spell.name.toLowerCase() === Array.from(spellElement.classList)[0]);
     const target = collisionElement.getAttribute('player') === 'true' ? character : enemyRefs.value[parseInt(collisionElement.getAttribute('id').split('enemy-')[1])];
-    //collisionElement.getAttribute('player') === 'true' ? characterState.setHealth(-spell.baseDamage) : target.enemy.currentHealth -= spell.baseDamage;
     target.setHealth(-spell.baseDamage);
-    console.log('Hit! You sunk my battleship!');
   }
 
   const animateSpell = (skillNumber) => {

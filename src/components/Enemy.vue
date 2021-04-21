@@ -2,10 +2,6 @@
   <div :id="'enemy-'+index" class="enemy">
     <div :id="'enemy_sprite-'+index" class="enemy_sprite pixelart"></div>
     <div id="enemy_shadow" class="character_shadow pixelart"></div>
-    <!-- <div class="enemy_text">
-      <p>{{enemyObj.name}}</p>
-      <p>{{enemyObj.currentHealth}}/{{enemyObj.maxHealth}}</p>
-    </div> -->
   </div>
 </template>
 
@@ -76,10 +72,10 @@ export default {
   .enemy{
     width: var(--grid-cell);
     height: var(--grid-cell);
-    //background-color: teal;
     pointer-events: none;
     position: absolute;
     overflow: hidden;
+    z-index: 2;
     p {
       padding: 0;
       margin: 0;
@@ -91,7 +87,6 @@ export default {
     position: absolute;
     width: calc(var(--grid-cell) * 3);
     height: calc(var(--grid-cell) * 3);
-    z-index: 1;
   }
 
   .enemy_text {

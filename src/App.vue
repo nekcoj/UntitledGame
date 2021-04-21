@@ -8,6 +8,8 @@
         <Actionbar class="actionbar"/>
       </div>
       <div class="map pixelart" ref="map">
+        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" :player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
+        <NPC v-for="(npc, index) in gameState.npcs" :key="index" :index="index" :npc="npc" :ref="el => {npcRefs[index] = el}" />
         <Character
           :facing="movement.facing"
           :walking="movement.isWalking"
@@ -16,12 +18,11 @@
           player="true"
           ref="character"
         />
-
-        <Enemy v-for="(enemy, index) in gameState.enemies" :key="index" :player="false" :enemy="enemy" :index="index" :ref="el => {enemyRefs[index] = el}"/>
       </div>
       <div class="target-list">
         <TargetList />
-      </div>  
+      </div>
+      <Dialogue :show="toggle.showDialogue" text="Placeholder dialogue" audio="" />
 
 
       <!-- For testing purposes START -->
@@ -47,7 +48,7 @@
 </template>
 
 <script>
-import { onMounted, watchEffect, reactive } from 'vue';
+import { onMounted, watchEffect } from 'vue';
 import Character from './components/Character'
 import Movement from './helpers/Movement';
 import Store from './helpers/Store';
@@ -57,19 +58,16 @@ import Actionbar from './components/Actionbar';
 import Spellbook from './components/Spellbook';
 import Enemy from './components/Enemy';
 import TargetList from './components/TargetList';
+import Dialogue from './components/Dialogue';
+import NPC from './components/NPC';
 
 export default {
   name: 'App',
-  component: { Character, Health, Actionbar, Spellbook, Enemy, TargetList },
+  component: { Character, Health, Actionbar, Spellbook, Enemy, TargetList, Dialogue, NPC },
   setup() {
     const { setupLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();
-    const { movement, map, character, gameWindow, gameState, characterState, enemyRefs } = Store();
-
-    const toggle = reactive({
-      spellbook: false,
-      playMusic: true,
-    });
+    const { movement, map, character, gameWindow, gameState, characterState, enemyRefs, npcRefs, toggle } = Store();
 
     let audio = null;
 
@@ -114,6 +112,20 @@ export default {
       audio.loop = true;
       audio.play();
     }
+
+    const performActionCheck = () => {
+      let pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
+      //const npcs = Array.from(document.querySelectorAll('.npc'));
+      npcRefs.value.forEach(npc => {
+        const { x, y } = npc.$el.getBoundingClientRect();
+        const charX = character.value.$el.getBoundingClientRect().x;
+        const charY = character.value.$el.getBoundingClientRect().y;
+        const size = 16 * pixelSize;
+        if (x - 5 < charX + size && x + size + 5 > charX && y -5 < charY + (size) && y + size + 5 > charY) { 
+          npc.activateDialogue();
+        }
+      });
+    };
     
     onMounted(async () => {
       await setupLevel();
@@ -137,8 +149,8 @@ export default {
           case 'KeyT':
             toggle.spellbook = !toggle.spellbook;
             break;
-          case 'KeyX': {
-            console.log(gameState.enemies);
+          case 'KeyE': {
+            performActionCheck();
             break;
           }
           default:
@@ -150,6 +162,7 @@ export default {
     return {
       map,
       toggle,
+      npcRefs,
       movement,
       character,
       enemyRefs,

@@ -37,7 +37,9 @@ export default function Movement() {
     let isBlocked = false;
     const collDivs = Array.from(document.querySelectorAll('.obstacle'));
     const enemies = Array.from(document.querySelectorAll('.enemy'));
+    const npcs = Array.from(document.querySelectorAll('.npc'));
     enemies.forEach(enemy => collDivs.push(enemy));
+    npcs.forEach(npc => collDivs.push(npc));
     collDivs.forEach(div => {
       const { x, y } = div.getBoundingClientRect();
       const charX = character.value.$el.getBoundingClientRect().x;

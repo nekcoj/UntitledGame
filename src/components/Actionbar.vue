@@ -54,7 +54,6 @@ export default {
       if (action.classList.contains('onCooldown')) return;
       action.classList.add('onCooldown');
       action.style.animationDuration = characterState.activeSkills[spellNumber].cooldown + 's';
-      //characterState.activeSkills[spellNumber].effect(spellNumber);
       castSkill(spellNumber);
       setTimeout(() => {
         action.classList.remove('onCooldown')

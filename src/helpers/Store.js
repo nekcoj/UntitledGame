@@ -24,6 +24,7 @@ const gameState = reactive({
   },
   level: null,
   enemies: null,
+  npcs: null,
 })
 
 const characterState = reactive({
@@ -100,12 +101,21 @@ const map = ref(null);
 const character = ref(null);
 const gameWindow = ref(null);
 const enemyRefs = ref([]);
+const npcRefs = ref([]);
+
+const toggle = reactive({
+  spellbook: false,
+  playMusic: true,
+  showDialogue: false,
+});
 
 export default function Store() {
   const pixelSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pixel-size'));
   return {
     map,
     keys,
+    toggle,
+    npcRefs,
     movement,
     gameState,
     pixelSize,

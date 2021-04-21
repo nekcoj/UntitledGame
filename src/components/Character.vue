@@ -64,6 +64,7 @@ export default {
     height: calc(var(--grid-cell));
     overflow: hidden;
     position: absolute;
+    z-index: 5;
   }
   .character_shadow {
     width: calc( var(--grid-cell) * 3);
@@ -81,7 +82,6 @@ export default {
     background-size: 100%;
     width: calc(var(--grid-cell) * 3);
     height: calc(var(--grid-cell) * 3);
-    z-index: 2;
   }
 
   .character[facing="left"] .character_sprite {
