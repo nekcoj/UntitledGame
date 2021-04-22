@@ -2,20 +2,20 @@
   <div :id="'npc-'+index" class="npc">
     <div :id="'npc_sprite-'+index" class="npc_sprite pixelart"></div>
     <div id="npc_shadow" class="character_shadow pixelart"></div>
-    <!-- <teleport to="#gameWindow">
-      <Dialogue :show="toggle.showDialogue" text="Placeholder dialogue" audio="" />
-    </teleport> -->
+    <teleport to="#gameWindow">
+      <Dialogue :show="toggle.showDialogue && dialogue.text != ''" :text="dialogue.text" :audio="dialogue.audio" />
+    </teleport>
   </div>
 </template>
 
 <script>
 import { onMounted, ref, watchEffect, reactive } from 'vue';
 import Store from '../helpers/Store';
-//import Dialogue from './Dialogue';
+import Dialogue from './Dialogue';
 
 export default {
   name: 'npc',
-  //components: { Dialogue },
+  components: { Dialogue },
   props: {
     npc: Object,
     index: Number,
@@ -64,8 +64,11 @@ export default {
 
     const activateDialogue = () => {
       toggle.showDialogue = !toggle.showDialogue;
-      dialogue.text = props.npc.dialogue[0].string;
-
+      let rng = Math.floor(Math.random() * props.npc.dialogue.length);
+      console.log(rng);
+      const {string: text, audio } = props.npc.dialogue[rng]; 
+      dialogue.text = text;
+      dialogue.audio = audio;
     }
 
     onMounted(() => {
@@ -74,7 +77,7 @@ export default {
       placeNPC();
     })
 
-    return { npcObj, activateDialogue, dialogue }
+    return { npcObj, activateDialogue, dialogue, toggle }
   }
 }
 </script>

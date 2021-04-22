@@ -22,7 +22,7 @@
       <div class="target-list">
         <TargetList />
       </div>
-      <Dialogue :show="toggle.showDialogue" text="Placeholder dialogue" audio="" />
+      <!-- <Dialogue :show="toggle.showDialogue" text="Placeholder dialogue" audio="" /> -->
 
 
       <!-- For testing purposes START -->
@@ -58,12 +58,14 @@ import Actionbar from './components/Actionbar';
 import Spellbook from './components/Spellbook';
 import Enemy from './components/Enemy';
 import TargetList from './components/TargetList';
-import Dialogue from './components/Dialogue';
+//import Dialogue from './components/Dialogue';
 import NPC from './components/NPC';
 
 export default {
   name: 'App',
-  component: { Character, Health, Actionbar, Spellbook, Enemy, TargetList, Dialogue, NPC },
+  component: { Character, Health, Actionbar, Spellbook, Enemy, TargetList,
+  //Dialogue, 
+    NPC },
   setup() {
     const { setupLevel, loadObstacles } = GameSetup();
     const { placeCharacter, getCoordinates, loadCharacterOnMap } = Movement();

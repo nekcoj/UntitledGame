@@ -23,7 +23,6 @@ export default {
     bottom: 5px;
     left: 50px;
     padding: 2%;
-    height: calc(var(--grid-cell) * 1);
     width: calc(var(--grid-cell) * 9);
     background: wheat;
     border: 3px solid brown;
