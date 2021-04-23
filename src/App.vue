@@ -41,6 +41,7 @@
           <p>Aim with your mouse!</p>
           <p>Beware the "monsters"!</p>
           <button @click="toggle.playMusic = !toggle.playMusic">{{toggle.playMusic ? 'Pause' : 'Play' }}</button>
+          <p>Press 'E' to interact with the NPC</p>
         </div>
       </teleport>
       <!-- For testing purposes END -->

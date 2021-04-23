@@ -65,7 +65,6 @@ export default {
     const activateDialogue = () => {
       toggle.showDialogue = !toggle.showDialogue;
       let rng = Math.floor(Math.random() * props.npc.dialogue.length);
-      console.log(rng);
       const {string: text, audio } = props.npc.dialogue[rng]; 
       dialogue.text = text;
       dialogue.audio = audio;
